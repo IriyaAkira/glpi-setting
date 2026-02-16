@@ -2,4 +2,4 @@
 storage/
 logs/
 log/
-*.conf
+glpi-agent.conf

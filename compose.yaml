@@ -1,4 +1,19 @@
 services:
+  reverse-proxy:
+    image: nginx:1.28.1
+    container_name: glpi-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./nginx/certs:/etc/nginx/certs:ro
+    environment:
+      TZ: ${TZ}
+    depends_on:
+      - app
+    restart: unless-stopped
+
   glpi:
     image: "glpi/glpi:11.0.4"
     restart: "unless-stopped"
@@ -7,6 +22,8 @@ services:
       # For GLPI 10.x, uncomment the following line to create a volume for plugins fetched from the marketplace.
       # - "./storage/glpi_marketplace:/var/www/glpi/marketplace/:rw"
     env_file: .env # Pass environment variables from .env file to the container
+    environment:
+      TZ: ${TZ}
     depends_on:
       - db
     ports:
@@ -22,6 +39,7 @@ services:
       MYSQL_DATABASE: ${GLPI_DB_NAME}
       MYSQL_USER: ${GLPI_DB_USER}
       MYSQL_PASSWORD: ${GLPI_DB_PASSWORD}
+      TZ: ${TZ}
     expose:
       - "3306"
 
