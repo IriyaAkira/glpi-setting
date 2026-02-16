@@ -1,0 +1,21 @@
+[ req ]
+default_bits       = 2048
+prompt             = no
+default_md         = sha256
+distinguished_name = dn
+req_extensions     = req_ext
+
+[ dn ]
+C  = JP
+ST = Tokyo
+L  = Chuo-ku
+O  = Sample
+CN = npsradius.nps.local
+
+[ req_ext ]
+subjectAltName = @alt_names
+extendedKeyUsage = serverAuth
+keyUsage = digitalSignature, keyEncipherment
+
+[ alt_names ]
+DNS.1 = npsradius.nps.local
