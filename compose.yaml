@@ -26,8 +26,6 @@ services:
       TZ: ${TZ}
     depends_on:
       - db
-    ports:
-      - "80:80"
 
   db:
     image: "mysql:8.4.7"
