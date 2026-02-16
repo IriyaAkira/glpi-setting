@@ -11,7 +11,7 @@ services:
     environment:
       TZ: ${TZ}
     depends_on:
-      - app
+      - glpi
     restart: unless-stopped
 
   glpi:
