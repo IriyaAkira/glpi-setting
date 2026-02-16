@@ -2,4 +2,9 @@
 storage/
 logs/
 log/
-glpi-agent.conf
+*.crt
+*.csr
+*.key
+*.conf
+*.cnf
+
