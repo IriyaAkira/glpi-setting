@@ -1,43 +1,40 @@
 @echo off
-setlocal
+setlocal EnableDelayedExpansion
 
-REM この cmd ファイルのあるディレクトリ
-set SCRIPT_DIR=%~dp0
+REM 実行ファイルのあるフォルダへ移動
+cd /d "%~dp0"
 
-REM 設定ファイル読み込み
-if not exist "%SCRIPT_DIR%glpi-agent.conf" (
-    echo ERROR: glpi-agent.conf not found.
+REM 設定ファイル確認
+if not exist "glpi-agent.conf" (
+    echo ERROR: glpi-agent.conf が見つかりません。
     exit /b 1
 )
 
-call "%SCRIPT_DIR%glpi-agent.conf"
+REM 変数初期化
+set SERVER=
 
-REM 必須変数チェック
-if "%GLPI_SERVER_URL%"=="" (
-    echo ERROR: GLPI_SERVER_URL is not defined.
+REM confファイルを読み込み
+for /f "usebackq tokens=1,* delims==" %%A in ("glpi-agent.conf") do (
+    if /I "%%A"=="GLPI_SERVER_URL" (
+        set SERVER=%%B
+    )
+)
+
+REM 値確認
+if "%SERVER%"=="" (
+    echo ERROR: GLPI_SERVER_URL が取得できません。
     exit /b 1
 )
 
-REM MSI ファイル
-set MSI_FILE=%SCRIPT_DIR%GLPI-Agent-1.16-x64.msi
+echo GLPI Server: %SERVER%
 
-if not exist "%MSI_FILE%" (
-    echo ERROR: MSI file not found: %MSI_FILE%
+REM MSI存在確認
+if not exist "GLPI-Agent-1.16-x64.msi" (
+    echo ERROR: MSIファイルが見つかりません。
     exit /b 1
 )
 
-echo Installing GLPI Agent...
-echo Server URL: %GLPI_SERVER_URL%
+REM インストール実行
+msiexec /i "GLPI-Agent-1.16-x64.msi" /quiet SERVER=%SERVER% /log install.log
 
-msiexec /i "%MSI_FILE%" ^
-  /quiet ^
-  SERVER="%GLPI_SERVER_URL%" ^
-  /norestart
-
-if errorlevel 1 (
-    echo Installation failed.
-    exit /b 1
-)
-
-echo Installation completed successfully.
-exit /b 0
+endlocal
