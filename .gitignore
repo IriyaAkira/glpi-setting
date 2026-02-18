@@ -7,3 +7,4 @@ log/
 *.key
 *.cnf
 *.conf
+*.msi
