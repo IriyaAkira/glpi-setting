@@ -40,6 +40,10 @@ if [[ -f "${LOG_FILE}" ]] && [[ $(wc -l < "${LOG_FILE}") -gt ${MAX_LINES} ]]; th
   log_info "Log file rotated (kept last ${MAX_LINES} lines)."
 fi
 
+# ===== 立ち上げ =====
+log_info "Changing directory to ${BASE_DIR}"
+cd "${BASE_DIR}"
+
 # ===== 事前準備 =====
 # ディレクトリ作成
 GLPI_DIR="${BASE_DIR}/storage/glpi"
