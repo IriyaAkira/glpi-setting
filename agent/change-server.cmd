@@ -13,13 +13,15 @@ if %errorlevel%==0 (
 )
 
 REM ===== GLPI-Agent ディレクトリ確認 =====
-
 set AGENT_DIR=C:\Program Files\GLPI-Agent
-set LOG_PATH=%AGENT_DIR%\change-server.log
 
+REM AGENT_DIR が存在しない場合は一時ログに記録して終了する
 if not exist "%AGENT_DIR%" (
     set LOG_PATH=%TEMP%\change-server.log
+    echo [%DATE% %TIME%] AGENT_DIR not found: %AGENT_DIR%. Aborting. >> "%LOG_PATH%"
+    goto end_script
 )
+set LOG_PATH=%AGENT_DIR%\change-server.log
 
 REM ===== ログファイルが存在していたら削除 =====
 if exist "%LOG_PATH%" (
@@ -71,4 +73,6 @@ if exist "%AGENT_DIR%" (
 
 echo 更新完了
 echo [%DATE% %TIME%] update complete >> "%LOG_PATH%"
+
+:end_script
 endlocal
