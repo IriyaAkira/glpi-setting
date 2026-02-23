@@ -12,10 +12,22 @@ if %errorlevel%==0 (
     set TARGET=%KEY2%
 )
 
-reg add "%TARGET%" /v server /t REG_SZ /d "%NEW_SERVER%" /f
+set AGENT_DIR=C:\Program Files\GLPI-Agent
+set LOG_PATH=%AGENT_DIR%\change-server.log
+if not exist "%AGENT_DIR%" (
+    set LOG_PATH=%TEMP%\change-server.log
+)
 
-net stop "glpi-agent" >nul 2>&1
-net start "glpi-agent" >nul 2>&1
+echo ==== change-server.cmd run at %DATE% %TIME% ==== >> "%LOG_PATH%"
+echo Target registry: %TARGET% >> "%LOG_PATH%"
+
+echo [%DATE% %TIME%] Updating registry (server) >> "%LOG_PATH%"
+reg add "%TARGET%" /v server /t REG_SZ /d "%NEW_SERVER%" /f >> "%LOG_PATH%" 2>&1
+
+echo [%DATE% %TIME%] Stopping glpi-agent >> "%LOG_PATH%"
+net stop "glpi-agent" >> "%LOG_PATH%" 2>&1
+echo [%DATE% %TIME%] Starting glpi-agent >> "%LOG_PATH%"
+net start "glpi-agent" >> "%LOG_PATH%" 2>&1
 
 REM ===== GLPI-Agent ディレクトリ確認 =====
 
@@ -25,6 +37,7 @@ set SHORTCUT_PATH=%AGENT_DIR%\GLPI-Agent Web Console.url
 if exist "%AGENT_DIR%" (
 
     echo インターネットショートカットを作成します...
+    echo [%DATE% %TIME%] Creating shortcut at %SHORTCUT_PATH% >> "%LOG_PATH%"
 
     (
         echo [InternetShortcut]
@@ -34,10 +47,13 @@ if exist "%AGENT_DIR%" (
     ) > "%SHORTCUT_PATH%"
 
     echo ショートカット作成完了
+    echo [%DATE% %TIME%] Shortcut created >> "%LOG_PATH%"
 
 ) else (
     echo GLPI-Agent ディレクトリが存在しないためスキップします
+    echo [%DATE% %TIME%] GLPI-Agent directory not found, skipped shortcut creation >> "%LOG_PATH%"
 )
 
 echo 更新完了
+echo [%DATE% %TIME%] update complete >> "%LOG_PATH%"
 endlocal
