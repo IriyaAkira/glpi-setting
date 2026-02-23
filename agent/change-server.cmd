@@ -29,8 +29,6 @@ if exist "%AGENT_DIR%" (
     (
         echo [InternetShortcut]
         echo URL=http://localhost:62354/
-        echo IconFile=%SystemRoot%\system32\shell32.dll
-        echo IconIndex=1
     ) > "%SHORTCUT_PATH%"
 
     echo ショートカット作成完了
